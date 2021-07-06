@@ -9,4 +9,8 @@ class SearchSubmitEvent extends SearchEvent {
   SearchSubmitEvent({required this.query});
 }
 
-class CloseSearchIcon extends SearchEvent {}
+class SearchIconEvent extends SearchEvent {
+  final bool expand;
+
+  SearchIconEvent({required this.expand});
+}

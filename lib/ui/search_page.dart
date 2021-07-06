@@ -17,8 +17,6 @@ class _SearchPageState extends State<SearchPage> {
   ScrollController _controller = ScrollController();
   TextEditingController _filter = TextEditingController();
   double _topContainer = 0;
-  Icon _searchIcon = Icon(Icons.search);
-  Widget _appBarTitle = Text('Search', style: TextStyle(color: Colors.black));
 
   @override
   void initState() {
@@ -26,9 +24,7 @@ class _SearchPageState extends State<SearchPage> {
     _controller.addListener(() {
       double value = _controller.offset / 139;
 
-      setState(() {
-        _topContainer = value;
-      });
+      _topContainer = value;
     });
   }
 
@@ -43,31 +39,6 @@ class _SearchPageState extends State<SearchPage> {
         ),
       );
     }
-  }
-
-  void searchPress() {
-    setState(() {
-      if (_searchIcon.icon == Icons.search) {
-        _searchIcon = Icon(Icons.close);
-        _appBarTitle = TextField(
-          onSubmitted: (value) {
-            checkFilter(value);
-          },
-          cursorColor: secondaryColor,
-          decoration: InputDecoration(
-              border: InputBorder.none,
-              prefixIcon: Icon(
-                Icons.search,
-                color: secondaryColor,
-              ),
-              hintText: 'Search Restaurants Name'),
-        );
-      } else {
-        _searchIcon = Icon(Icons.search);
-        _appBarTitle = Text('Search', style: TextStyle(color: Colors.black));
-        _filter.clear();
-      }
-    });
   }
 
   @override
@@ -87,29 +58,71 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
           actions: [
-            IconButton(
-              icon: _searchIcon,
-              color: Colors.black,
-              iconSize: 30,
-              onPressed: searchPress,
+            BlocBuilder<SearchBloc, SearchState>(
+              builder: (context, state) {
+                if (state is SearchInitial) {
+                  return IconButton(
+                    icon: Icon(Icons.search),
+                    color: Colors.black,
+                    iconSize: 30,
+                    onPressed: () {
+                      context.read<SearchBloc>().add(
+                            SearchIconEvent(
+                              expand: true,
+                            ),
+                          );
+                    },
+                  );
+                } else {
+                  return IconButton(
+                    icon: Icon(Icons.close),
+                    color: Colors.black,
+                    iconSize: 30,
+                    onPressed: () {
+                      context.read<SearchBloc>().add(
+                            SearchIconEvent(
+                              expand: false,
+                            ),
+                          );
+                      _filter.clear();
+                    },
+                  );
+                }
+              },
             ),
           ],
           backgroundColor: primaryColor,
-          title: Center(child: _appBarTitle),
+          title: BlocBuilder<SearchBloc, SearchState>(
+            builder: (context, state) {
+              if (state is SearchInitial) {
+                return Center(
+                  child: Text(
+                    'Search',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                );
+              } else {
+                return TextField(
+                  onSubmitted: (value) {
+                    checkFilter(value);
+                  },
+                  cursorColor: secondaryColor,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: secondaryColor,
+                      ),
+                      hintText: 'Search Restaurants Name'),
+                );
+              }
+            },
+          ),
         ),
         body: BlocBuilder<SearchBloc, SearchState>(
           builder: (context, state) {
-            if (state is SearchInitial) {
-              return Center(
-                child: Lottie.asset(
-                  'assets/search.json',
-                  repeat: true,
-                  reverse: true,
-                  animate: true,
-                  width: 450,
-                  height: 450,
-                ),
-              );
+            if (state is SearchInitial || state is OpenSearch) {
+              return _lottieSearchAnimation();
             } else if (state is LoadingSearch) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -125,6 +138,18 @@ class _SearchPageState extends State<SearchPage> {
             }
           },
         ),
+      ),
+    );
+  }
+
+  Widget _lottieSearchAnimation() {
+    return Center(
+      child: Lottie.asset(
+        'assets/search.json',
+        repeat: true,
+        animate: true,
+        width: 450,
+        height: 450,
       ),
     );
   }
@@ -164,5 +189,6 @@ class _SearchPageState extends State<SearchPage> {
   void dispose() {
     super.dispose();
     _controller.dispose();
+    _filter.dispose();
   }
 }

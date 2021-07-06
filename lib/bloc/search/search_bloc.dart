@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:submission_1/data/model/Remote/restaurants.dart';
 import 'package:submission_1/data/source/repository.dart';
@@ -33,8 +33,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             message: 'Something wrong, please check internet connection');
       }
     }
-    if (event is CloseSearchIcon) {
-      yield SearchInitial();
+    if (event is SearchIconEvent) {
+      if (event.expand) {
+        yield OpenSearch();
+      } else {
+        yield SearchInitial();
+      }
     }
   }
 }

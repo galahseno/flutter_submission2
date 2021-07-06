@@ -27,8 +27,6 @@ class _HomePageState extends State<HomePage> {
       _topContainer = _controller.offset / 139;
     });
 
-    print(_topContainer);
-
     context.read<ListRestaurantBloc>().add(LoadedEvent(value: _topContainer));
   }
 
@@ -99,13 +97,12 @@ class _HomePageState extends State<HomePage> {
           opacity: scale,
           child: Transform(
             alignment: Alignment.bottomCenter,
-            transform: Matrix4.identity()
-              ..scale(scale, scale),
+            transform: Matrix4.identity()..scale(scale, scale),
             child: Align(
                 heightFactor: 0.8,
                 alignment: Alignment.topCenter,
                 child:
-                buildRestaurantsItem(context, state.listRestaurant[index])),
+                    buildRestaurantsItem(context, state.listRestaurant[index])),
           ),
         );
       },

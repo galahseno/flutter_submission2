@@ -24,3 +24,5 @@ class ListRestaurantSearchNotFound extends SearchState {
 }
 
 class LoadingSearch extends SearchState {}
+
+class OpenSearch extends SearchState {}
