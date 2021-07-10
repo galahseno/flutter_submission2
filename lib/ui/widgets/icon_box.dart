@@ -5,12 +5,11 @@ class IconBox extends StatelessWidget {
   final Widget child;
   final double width, height;
 
-  const IconBox({
-    Key? key,
+  IconBox({
     required this.child,
     required this.width,
     required this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

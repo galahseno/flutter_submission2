@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:submission_1/bloc/restaurant/list_restaurant_bloc.dart';
 import 'package:submission_1/common/styles.dart';
-import 'package:submission_1/data/api/api_service.dart';
-import 'package:submission_1/data/model/Remote/restaurant_response.dart';
 import 'package:submission_1/ui/search_page.dart';
 import 'package:submission_1/ui/widgets/card_restaurants.dart';
 import 'package:submission_1/ui/widgets/error_widget.dart';
@@ -67,10 +65,8 @@ class _HomePageState extends State<HomePage> {
               );
             } else if (state is ListRestaurantLoaded) {
               return _listViewBuild(state);
-            } else if (state is ListRestaurantError) {
-              return buildErrorWidget(state.message);
             } else {
-              return Container();
+              return buildErrorWidget((state as ListRestaurantError).message);
             }
           },
         ),
@@ -81,7 +77,7 @@ class _HomePageState extends State<HomePage> {
   Widget _listViewBuild(ListRestaurantLoaded state) {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
-      controller: _controller,
+      // controller: _controller,
       itemCount: (state).listRestaurant.length,
       itemBuilder: (context, index) {
         double scale = 1.0;

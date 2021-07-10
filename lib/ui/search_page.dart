@@ -157,7 +157,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _listViewBuild(ListRestaurantSearch state) {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
-      controller: _controller,
+      // controller: _controller,
       itemCount: state.listRestaurant.length,
       itemBuilder: (context, index) {
         double scale = 1.0;

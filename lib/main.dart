@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:submission_1/bloc/detail/detail_bloc.dart';
 import 'package:submission_1/bloc/restaurant/list_restaurant_bloc.dart';
 import 'package:submission_1/bloc/search/search_bloc.dart';
 import 'package:submission_1/common/styles.dart';
 import 'package:submission_1/data/source/repository.dart';
+import 'package:submission_1/ui/detail_page.dart';
 import 'package:submission_1/ui/home_page.dart';
 import 'package:submission_1/ui/search_page.dart';
 
@@ -26,6 +28,11 @@ class MyApp extends StatelessWidget {
             Repository(),
           ),
         ),
+        BlocProvider<DetailBloc>(
+          create: (_) => DetailBloc(
+            Repository(),
+          ),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -41,10 +48,9 @@ class MyApp extends StatelessWidget {
         initialRoute: HomePage.routeName,
         routes: {
           HomePage.routeName: (context) => HomePage(),
-          // DetailPage.routeName: (context) => DetailPage(
-          //       restaurants:
-          //           ModalRoute.of(context)?.settings.arguments as Restaurants,
-          //     ),
+          DetailPage.routeName: (context) => DetailPage(
+                id: ModalRoute.of(context)?.settings.arguments as String,
+              ),
           SearchPage.routeName: (context) => SearchPage(),
         },
       ),
