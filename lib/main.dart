@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:submission_1/bloc/detail/detail_bloc.dart';
+import 'package:submission_1/bloc/favorite/dummy_favorite_bloc.dart';
 import 'package:submission_1/bloc/restaurant/list_restaurant_bloc.dart';
 import 'package:submission_1/bloc/search/search_bloc.dart';
 import 'package:submission_1/common/styles.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
           create: (_) => DetailBloc(
             Repository(),
           ),
+        ),
+        BlocProvider<DummyFavoriteBloc>(
+          create: (_) => DummyFavoriteBloc(),
         ),
       ],
       child: MaterialApp(

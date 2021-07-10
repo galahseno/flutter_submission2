@@ -17,7 +17,10 @@ Widget buildErrorWidget(String message) {
           ),
           Text(
             message,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green[800]),
+            style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.green[800]),
             textAlign: TextAlign.center,
           )
         ],

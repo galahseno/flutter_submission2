@@ -38,7 +38,6 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
             await _repository.getDetailRestaurants(event.id);
         yield DetailLoaded(detailResponse: detailRestaurant);
       } catch (e) {
-        print(e.toString());
         yield DetailError(
             message: 'Something wrong, please check internet connection');
       }

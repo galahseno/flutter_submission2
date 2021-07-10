@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/gestures.dart';
 import 'package:meta/meta.dart';
 import 'package:submission_1/data/model/Remote/restaurants.dart';
 import 'package:submission_1/data/source/repository.dart';

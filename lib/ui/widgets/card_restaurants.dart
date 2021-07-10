@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:submission_1/bloc/detail/detail_bloc.dart';
+import 'package:submission_1/bloc/favorite/dummy_favorite_bloc.dart';
 import 'package:submission_1/data/api/api_service.dart';
 import 'package:submission_1/data/model/Remote/restaurants.dart';
 import 'package:submission_1/ui/detail_page.dart';
@@ -11,6 +12,7 @@ Widget buildRestaurantsItem(BuildContext context, Restaurants restaurants) {
       Navigator.pushNamed(context, DetailPage.routeName,
           arguments: restaurants.id);
       context.read<DetailBloc>().add(DetailInitialEvent());
+      context.read<DummyFavoriteBloc>().add(FavoriteDummyInitial());
     },
     child: Container(
       height: 150,

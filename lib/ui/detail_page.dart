@@ -1,13 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lottie/lottie.dart';
 import 'package:submission_1/bloc/detail/detail_bloc.dart';
+import 'package:submission_1/bloc/favorite/dummy_favorite_bloc.dart';
 import 'package:submission_1/common/styles.dart';
 import 'package:submission_1/data/api/api_service.dart';
-import 'package:submission_1/data/model/remote/detail/drinks.dart';
-import 'package:submission_1/data/model/remote/detail/foods.dart';
+import 'package:submission_1/ui/bottom_sheet.dart';
+import 'package:submission_1/ui/widgets/drinks_item.dart';
 import 'package:submission_1/ui/widgets/error_widget.dart';
+import 'package:submission_1/ui/widgets/foods_item.dart';
 import 'package:submission_1/ui/widgets/icon_box.dart';
 
 class DetailPage extends StatefulWidget {
@@ -22,10 +22,6 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  Icon favoriteIcon = Icon(Icons.favorite_border);
-  TextEditingController nameController = TextEditingController();
-  TextEditingController reviewController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -48,7 +44,7 @@ class _DetailPageState extends State<DetailPage> {
             showModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  return _showBottomSheet();
+                  return showBottomSheetReviews(context);
                 });
           },
         ),
@@ -73,6 +69,7 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildDetailContent(DetailLoaded state) {
     final size = MediaQuery.of(context).size;
+    bool _favorite = false;
 
     return SingleChildScrollView(
       child: Container(
@@ -115,12 +112,28 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          setDummyFavorite();
+                          _favorite = !_favorite;
+                          setDummyFavorite(_favorite);
+                          context
+                              .read<DummyFavoriteBloc>()
+                              .add(FavoriteDummyEvent(favorite: _favorite));
                         },
                         child: IconBox(
                           width: 45,
                           height: 45,
-                          child: favoriteIcon,
+                          child: BlocBuilder<DummyFavoriteBloc,
+                              DummyFavoriteState>(
+                            builder: (_, state) {
+                              if (state is DummyFavoriteInitial) {
+                                return Icon(Icons.favorite_border);
+                              } else {
+                                return Icon(
+                                  Icons.favorite,
+                                  color: secondaryColor,
+                                );
+                              }
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -156,7 +169,7 @@ class _DetailPageState extends State<DetailPage> {
                   scrollDirection: Axis.horizontal,
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return _buildDrinksItems(context,
+                    return buildDrinksItems(context,
                         state.detailResponse.restaurant.menus.drinks[index]);
                   }),
             ),
@@ -167,7 +180,7 @@ class _DetailPageState extends State<DetailPage> {
                   scrollDirection: Axis.horizontal,
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return _buildFoodsItems(context,
+                    return buildFoodsItems(context,
                         state.detailResponse.restaurant.menus.foods[index]);
                   }),
             ),
@@ -175,160 +188,6 @@ class _DetailPageState extends State<DetailPage> {
         ),
       ),
     );
-  }
-
-  _showBottomSheet() {
-    return BlocBuilder<DetailBloc, DetailState>(
-      builder: (_, state) {
-        if (state is DetailInitial) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is DetailLoaded) {
-          return _buildCostumerReviews(state);
-        } else {
-          return buildErrorWidget((state as DetailError).message);
-        }
-      },
-    );
-  }
-
-  Widget _buildCostumerReviews(DetailLoaded state) {
-    return SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.only(top: 10, bottom: 10),
-        child: Column(
-          children: _checkReviewsLength(state),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _checkReviewsLength(DetailLoaded state) {
-    final size = MediaQuery.of(context).size;
-    final _formKey = GlobalKey<FormState>();
-
-    List<Widget> reviewName = [];
-    for (var value in state.detailResponse.restaurant.customerReviews) {
-      reviewName.add(IconBox(
-          child: Container(
-            margin: EdgeInsets.all(5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(value.name!),
-                Text(value.date!),
-                Text(
-                  value.review!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          width: size.width - 40,
-          height: 100));
-    }
-    reviewName.add(
-      ElevatedButton.icon(
-        icon: Icon(Icons.rate_review),
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Center(
-                    child: Text('Add your review'),
-                  ),
-                  content: Container(
-                    width: double.infinity,
-                    height: 200,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              } else if (value.length < 5) {
-                                return 'Name must be at least 5 character';
-                              }
-                              return null;
-                            },
-                            controller: nameController,
-                            cursorColor: secondaryColor,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(
-                                  Icons.account_box_outlined,
-                                  color: secondaryColor,
-                                ),
-                                hintText: 'Input your name here . . '),
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              } else if (value.length < 10) {
-                                return 'Review must be at least 10 character';
-                              }
-                              return null;
-                            },
-                            controller: reviewController,
-                            maxLines: 3,
-                            cursorColor: secondaryColor,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(
-                                  Icons.rate_review,
-                                  color: secondaryColor,
-                                ),
-                                hintText: 'Input your review here . .'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(secondaryColor),
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                      child: Text('Cancel'),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(secondaryColor),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.pop(context);
-                          context.read<DetailBloc>().add(
-                                PostDetailReviewEvent(
-                                  id: state.detailResponse.restaurant.id,
-                                  name: nameController.text,
-                                  review: reviewController.text,
-                                ),
-                              );
-                        }
-                      },
-                      child: Text('Post Review'),
-                    ),
-                  ],
-                );
-              });
-          nameController.clear();
-          reviewController.clear();
-        },
-        label: Text('Add Reviews'),
-        style: ElevatedButton.styleFrom(primary: secondaryColor),
-      ),
-    );
-    return reviewName;
   }
 
   List<Widget> _checkCategoriesLength(DetailLoaded state) {
@@ -340,58 +199,19 @@ class _DetailPageState extends State<DetailPage> {
     return categoriesName;
   }
 
-  Widget _buildDrinksItems(BuildContext context, Drinks drinks) {
-    return Container(
-      margin: EdgeInsets.only(right: 5),
-      child: Column(
-        children: [
-          Lottie.asset(
-            'assets/drinks.json',
-            repeat: true,
-            reverse: true,
-            animate: true,
-            width: 125,
-            height: 100,
-          ),
-          Text(drinks.name),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFoodsItems(BuildContext context, Foods foods) {
-    return Container(
-      margin: EdgeInsets.only(right: 5),
-      child: Column(
-        children: [
-          Lottie.asset(
-            'assets/foods.json',
-            repeat: true,
-            reverse: true,
-            animate: true,
-            width: 125,
-            height: 100,
-          ),
-          Text(foods.name),
-        ],
-      ),
-    );
-  }
-
-  void setDummyFavorite() {
-    setState(() {
-      if (favoriteIcon.icon == Icons.favorite_border) {
-        favoriteIcon = Icon(
-          Icons.favorite,
-          color: secondaryColor,
-        );
-        final snackBar = SnackBar(content: Text('Add to Dummy Favorite'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else {
-        favoriteIcon = Icon(Icons.favorite_border);
-        final snackBar = SnackBar(content: Text('Delete from Dummy Favorite'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    });
+  void setDummyFavorite(bool favorite) {
+    if (favorite) {
+      final snackBar = SnackBar(
+        content: Text('Add to Dummy Favorite'),
+        backgroundColor: Colors.green[300],
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      final snackBar = SnackBar(
+        content: Text('Delete from Dummy Favorite'),
+        backgroundColor: Colors.green[300],
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 }

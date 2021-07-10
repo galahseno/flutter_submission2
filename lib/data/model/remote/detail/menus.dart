@@ -5,9 +5,7 @@ class Menus {
   late List<Foods> foods;
   late List<Drinks> drinks;
 
-  Menus({
-      required this.foods,
-      required this.drinks});
+  Menus({required this.foods, required this.drinks});
 
   Menus.fromJson(dynamic json) {
     if (json["foods"] != null) {

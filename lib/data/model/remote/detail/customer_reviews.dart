@@ -4,11 +4,7 @@ class CustomerReviews {
   late String? review;
   late String? date;
 
-  CustomerReviews({
-    this.id,
-    this.name,
-    this.review,
-    this.date});
+  CustomerReviews({this.id, this.name, this.review, this.date});
 
   CustomerReviews.fromJson(dynamic json) {
     name = json["name"];
@@ -23,5 +19,4 @@ class CustomerReviews {
     map["review"] = review;
     return map;
   }
-
 }
