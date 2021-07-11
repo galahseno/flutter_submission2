@@ -22,7 +22,7 @@ class ListRestaurantBloc
       try {
         final restaurant = await _repository.getRestaurants();
         yield ListRestaurantLoaded(
-            listRestaurant: restaurant.restaurants, topContainer: event.value);
+            listRestaurant: restaurant.restaurants);
       } catch (e) {
         yield ListRestaurantError(
             message: 'Something wrong, please check internet connection');

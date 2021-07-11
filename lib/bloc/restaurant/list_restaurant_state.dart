@@ -13,8 +13,7 @@ class ListRestaurantError extends ListRestaurantState {
 
 class ListRestaurantLoaded extends ListRestaurantState {
   final List<Restaurants> listRestaurant;
-  final double topContainer;
 
   ListRestaurantLoaded(
-      {required this.listRestaurant, required this.topContainer});
+      {required this.listRestaurant});
 }

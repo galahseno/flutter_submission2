@@ -22,10 +22,14 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _controller.addListener(() {
-      _topContainer = _controller.offset / 139;
+      double value = _controller.offset / 139;
+
+      setState(() {
+        _topContainer = value;
+      });
     });
 
-    context.read<ListRestaurantBloc>().add(LoadedEvent(value: _topContainer));
+    context.read<ListRestaurantBloc>().add(LoadedEvent());
   }
 
   @override
@@ -77,7 +81,7 @@ class _HomePageState extends State<HomePage> {
   Widget _listViewBuild(ListRestaurantLoaded state) {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
-      // controller: _controller,
+      controller: _controller,
       itemCount: (state).listRestaurant.length,
       itemBuilder: (context, index) {
         double scale = 1.0;
@@ -95,10 +99,10 @@ class _HomePageState extends State<HomePage> {
             alignment: Alignment.bottomCenter,
             transform: Matrix4.identity()..scale(scale, scale),
             child: Align(
-                heightFactor: 0.8,
-                alignment: Alignment.topCenter,
-                child:
-                    buildRestaurantsItem(context, state.listRestaurant[index])),
+              heightFactor: 0.8,
+              alignment: Alignment.topCenter,
+              child: buildRestaurantsItem(context, state.listRestaurant[index]),
+            ),
           ),
         );
       },

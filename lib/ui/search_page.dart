@@ -24,7 +24,9 @@ class _SearchPageState extends State<SearchPage> {
     _controller.addListener(() {
       double value = _controller.offset / 139;
 
-      _topContainer = value;
+      setState(() {
+        _topContainer = value;
+      });
     });
   }
 
@@ -157,7 +159,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _listViewBuild(ListRestaurantSearch state) {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
-      // controller: _controller,
+      controller: _controller,
       itemCount: state.listRestaurant.length,
       itemBuilder: (context, index) {
         double scale = 1.0;

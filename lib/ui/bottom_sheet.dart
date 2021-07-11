@@ -124,7 +124,7 @@ List<Widget> _checkReviewsLength(DetailLoaded state, BuildContext context) {
                   TextButton(
                     style: ButtonStyle(
                       foregroundColor:
-                      MaterialStateProperty.all(secondaryColor),
+                          MaterialStateProperty.all(Colors.green[800]),
                     ),
                     onPressed: () => Navigator.pop(context),
                     child: Text('Cancel'),
@@ -132,18 +132,18 @@ List<Widget> _checkReviewsLength(DetailLoaded state, BuildContext context) {
                   TextButton(
                     style: ButtonStyle(
                       foregroundColor:
-                      MaterialStateProperty.all(secondaryColor),
+                          MaterialStateProperty.all(Colors.green[800]),
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         Navigator.pop(context);
                         context.read<DetailBloc>().add(
-                          PostDetailReviewEvent(
-                            id: state.detailResponse.restaurant.id,
-                            name: nameController.text,
-                            review: reviewController.text,
-                          ),
-                        );
+                              PostDetailReviewEvent(
+                                id: state.detailResponse.restaurant.id,
+                                name: nameController.text,
+                                review: reviewController.text,
+                              ),
+                            );
                       }
                     },
                     child: Text('Post Review'),
