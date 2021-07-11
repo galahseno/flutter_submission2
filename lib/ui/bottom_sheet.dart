@@ -46,10 +46,10 @@ List<Widget> _checkReviewsLength(DetailLoaded state, BuildContext context) {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(value.name!),
-              Text(value.date!),
+              Text(value.name ?? '-'),
+              Text(value.date ?? '-'),
               Text(
-                value.review!,
+                value.review ?? '-',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
